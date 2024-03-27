@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
+import { Ionicons } from '@expo/vector-icons/'
+
 
 const GRID_SIZE = 4;
 
@@ -32,22 +34,127 @@ const App = () => {
 
   const swipe = (direction) => {
     const newGrid = [...grid];
+    let moved = false;
+
     switch (direction) {
       case 'up':
-        // Implement swipe up logic
+        moved = swipeUp(newGrid);
         break;
       case 'down':
-        // Implement swipe down logic
+        moved = swipeDown(newGrid);
         break;
       case 'left':
-        // Implement swipe left logic
+        moved = swipeLeft(newGrid);
         break;
       case 'right':
-        // Implement swipe right logic
+        moved = swipeRight(newGrid);
         break;
     }
-    setGrid(newGrid);
-    addNumber();
+
+    if (moved) {
+      setGrid(newGrid);
+      addNumber();
+    }
+  };
+
+  const swipeUp = (grid) => {
+    let moved = false;
+
+    for (let j = 0; j < GRID_SIZE; j++) {
+      for (let i = 1; i < GRID_SIZE; i++) {
+        if (grid[i][j] !== 0) {
+          let k = i;
+          while (k > 0 && grid[k - 1][j] === 0) {
+            grid[k - 1][j] = grid[k][j];
+            grid[k][j] = 0;
+            k--;
+            moved = true;
+          }
+          if (k > 0 && grid[k - 1][j] === grid[k][j]) {
+            grid[k - 1][j] *= 2;
+            grid[k][j] = 0;
+            moved = true;
+          }
+        }
+      }
+    }
+
+    return moved;
+  };
+
+  const swipeDown = (grid) => {
+    let moved = false;
+
+    for (let j = 0; j < GRID_SIZE; j++) {
+      for (let i = GRID_SIZE - 2; i >= 0; i--) {
+        if (grid[i][j] !== 0) {
+          let k = i;
+          while (k < GRID_SIZE - 1 && grid[k + 1][j] === 0) {
+            grid[k + 1][j] = grid[k][j];
+            grid[k][j] = 0;
+            k++;
+            moved = true;
+          }
+          if (k < GRID_SIZE - 1 && grid[k + 1][j] === grid[k][j]) {
+            grid[k + 1][j] *= 2;
+            grid[k][j] = 0;
+            moved = true;
+          }
+        }
+      }
+    }
+
+    return moved;
+  };
+
+  const swipeLeft = (grid) => {
+    let moved = false;
+
+    for (let i = 0; i < GRID_SIZE; i++) {
+      for (let j = 1; j < GRID_SIZE; j++) {
+        if (grid[i][j] !== 0) {
+          let k = j;
+          while (k > 0 && grid[i][k - 1] === 0) {
+            grid[i][k - 1] = grid[i][k];
+            grid[i][k] = 0;
+            k--;
+            moved = true;
+          }
+          if (k > 0 && grid[i][k - 1] === grid[i][k]) {
+            grid[i][k - 1] *= 2;
+            grid[i][k] = 0;
+            moved = true;
+          }
+        }
+      }
+    }
+
+    return moved;
+  };
+
+  const swipeRight = (grid) => {
+    let moved = false;
+
+    for (let i = 0; i < GRID_SIZE; i++) {
+      for (let j = GRID_SIZE - 2; j >= 0; j--) {
+        if (grid[i][j] !== 0) {
+          let k = j;
+          while (k < GRID_SIZE - 1 && grid[i][k + 1] === 0) {
+            grid[i][k + 1] = grid[i][k];
+            grid[i][k] = 0;
+            k++;
+            moved = true;
+          }
+          if (k < GRID_SIZE - 1 && grid[i][k + 1] === grid[i][k]) {
+            grid[i][k + 1] *= 2;
+            grid[i][k] = 0;
+            moved = true;
+          }
+        }
+      }
+    }
+
+    return moved;
   };
 
   const renderGrid = () => {
@@ -97,16 +204,24 @@ const App = () => {
       <View style={styles.gridContainer}>{renderGrid()}</View>
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.button} onPress={() => swipe('up')}>
-          <Text style={styles.buttonText}>Up</Text>
+          <Text style={styles.buttonText}>
+            <Ionicons name="arrow-up-outline" size={15} color='#000'/>
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => swipe('down')}>
-          <Text style={styles.buttonText}>Down</Text>
+          <Text style={styles.buttonText}>
+            <Ionicons name="arrow-down-outline" size={15} color='#000'/>
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => swipe('left')}>
-          <Text style={styles.buttonText}>Left</Text>
+          <Text style={styles.buttonText}>
+            <Ionicons name="arrow-back-outline" size={15} color='#000'/>
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => swipe('right')}>
-          <Text style={styles.buttonText}>Right</Text>
+          <Text style={styles.buttonText}>
+            <Ionicons name="arrow-forward-outline" size={15} color='#000'/>
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -160,6 +275,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#3C4146',
+  },
+  arrow: {
+    width: 10,
+    height: 10,
   },
 });
 
