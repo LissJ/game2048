@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons/'
+import { StyleSheet, View, Text, TouchableOpacity, Image, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons/';
+// import { useNavigation } from '@react-navigation/native';
 
 
 const GRID_SIZE = 4;
@@ -12,6 +13,41 @@ const App = () => {
     addNumber();
     addNumber();
   }, []);
+
+  useEffect(() => {
+    const checkGameOver = () => {
+      // Verificar se o jogador ganhou (encontrou 2048)
+      for (let i = 0; i < GRID_SIZE; i++) {
+        for (let j = 0; j < GRID_SIZE; j++) {
+          if (grid[i][j] === 2048) {
+            Alert.alert('VitaMental', 'Parabéns! Você chegou ao 2048.');
+            return;
+          }
+        }
+      }
+
+      // Verificar se o jogador perdeu (não há mais movimentos)
+      let movesPossible = false;
+      for (let i = 0; i < GRID_SIZE; i++) {
+        for (let j = 0; j < GRID_SIZE; j++) {
+          if (grid[i][j] === 0) {
+            movesPossible = true;
+          } else if (
+            (i < GRID_SIZE - 1 && grid[i][j] === grid[i + 1][j]) ||
+            (j < GRID_SIZE - 1 && grid[i][j] === grid[i][j + 1])
+          ) {
+            movesPossible = true;
+          }
+        }
+      }
+
+      if (!movesPossible) {
+        Alert.alert('VitaMental', 'Poxa! Você perdeu.');
+      }
+    };
+
+    checkGameOver();
+  }, [grid]); // Executar sempre que o estado da grade mudar
 
   const addNumber = () => {
     const emptyCells = [];
@@ -199,30 +235,47 @@ const App = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>2048</Text>
-      <View style={styles.gridContainer}>{renderGrid()}</View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => swipe('up')}>
-          <Text style={styles.buttonText}>
-            <Ionicons name="arrow-up-outline" size={15} color='#000'/>
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => swipe('down')}>
-          <Text style={styles.buttonText}>
-            <Ionicons name="arrow-down-outline" size={15} color='#000'/>
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => swipe('left')}>
-          <Text style={styles.buttonText}>
-            <Ionicons name="arrow-back-outline" size={15} color='#000'/>
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => swipe('right')}>
-          <Text style={styles.buttonText}>
-            <Ionicons name="arrow-forward-outline" size={15} color='#000'/>
-          </Text>
-        </TouchableOpacity>
+
+    <View style={styles.header}>
+      <View style={styles.container}>
+        <Text style={styles.jogos}>
+          Jogo 2048
+          <View style={styles.iconeHome}>
+            <Ionicons name="home-outline"
+              style={styles.iconeInicio}
+            // onPress={toHome} 
+            />
+          </View>
+        </Text>
+
+        <Text style={styles.resumoJogos}>
+          Um jogo de somar os números iguais até chegar a 2048.
+        </Text>
+      </View>
+      <View style={styles.containers}>
+        <View style={styles.gridContainer}>{renderGrid()}</View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={() => swipe('up')}>
+            <Text style={styles.buttonText}>
+              <Ionicons name="arrow-up-outline" size={15} color='#000' />
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={() => swipe('down')}>
+            <Text style={styles.buttonText}>
+              <Ionicons name="arrow-down-outline" size={15} color='#000' />
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={() => swipe('left')}>
+            <Text style={styles.buttonText}>
+              <Ionicons name="arrow-back-outline" size={15} color='#000' />
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={() => swipe('right')}>
+            <Text style={styles.buttonText}>
+              <Ionicons name="arrow-forward-outline" size={15} color='#000' />
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -230,6 +283,50 @@ const App = () => {
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#fff',
+    height: 180,
+    // flex: 0.7,
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
+    paddingHorizontal: 20,
+  },
+  jogos: {
+    marginTop: 50,
+    marginLeft: 15,
+    fontSize: 23,
+    fontWeight: '800',
+    color: '#34393E'
+  },
+  iconeHome: {
+    position: 'absolute',
+    fontSize: 27,
+    // marginLeft: 155,
+    marginLeft: 180,
+    color: "#34393E"
+  },
+  iconeInicio: {
+    position: 'absolute',
+    fontSize: 24,
+    marginTop: 5,
+    // marginLeft: 155,
+    marginLeft: 180,
+    color: "#34393E"
+  },
+  resumoJogos: {
+    marginTop: 10,
+    marginLeft: 15,
+    marginRight: 15,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#34393E'
+  },
+  header: {
+    justifyContent: 'center',
+    display: 'flex',
+    flex: 1,
+    backgroundColor: '#3C4146'
+  },
+  containers: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
