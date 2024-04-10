@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
   iconeInicio: {
     position: 'absolute',
     fontSize: 24,
-    marginTop: 5,
+    // marginTop: 5,
     // marginLeft: 155,
     marginLeft: 180,
     color: "#34393E"
